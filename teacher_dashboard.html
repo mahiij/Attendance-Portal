@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="teacher_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-bg">
+    <div class="teacher-dashboard-layout">
+        <aside class="teacher-sidebar">
+            <div class="sidebar-logo">
+                <img src="https://www.vvitu.ac.in/src/assets/images/VVIT_logo.png" alt="VVIT Logo" class="sidebar-logo-img">
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="teacher-profile.html">Profile</a></li>
+                    <li><a href="manage-attendance.html">Class Attendance</a></li>
+                    <li><a href="upload-assignment.html">Upload Assignment</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="student-performance.html">Student Performance</a></li>
+                    <li><a href="announcements.html">Notices</a></li>
+                    <li><a href="index.html">Log out</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="teacher-dashboard-container">
+            <header class="dashboard-header">
+                <div class="greeting">Welcome, Prof. NORAH</div>
+                <div class="user-info">
+                    <span class="user-name">Prof. NORAH</span>
+                    <span class="user-role">Faculty - CSE (IoT)</span>
+                    <img src="https://i.pinimg.com/736x/52/61/bd/5261bd492ef52666d60258a067239007.jpg" class="user-avatar" />
+                </div>
+            </header>
+
+            <section class="dashboard-main">
+                <div class="card">
+                    <h2>Teacher Dashboard</h2>
+                    <p>Use the menu to manage your classes, assignments, and student details.</p>
+                </div>
+                <div class="card" id="attendance-records-card" style="margin-top:24px;">
+                    <h2>Latest Attendance Records</h2>
+                    <div id="dashboardAttendanceRecords">
+                        <strong>No attendance records found. Please submit attendance first.</strong>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

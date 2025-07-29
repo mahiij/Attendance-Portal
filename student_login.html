@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - College Management System</title>
+    <link rel="stylesheet" href="student_login.css">
+</head>
+<body>
+    <div class="login-container">
+        <form class="login-form" id="studentLoginForm" autocomplete="off">
+            <h2>Student Login</h2>
+            <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="studentId" required>
+            </div>
+            <div class="form-group">
+                <label for="studentPassword">Password</label>
+                <input type="password" id="studentPassword" name="studentPassword" required>
+            </div>
+            <div class="form-group captcha-group">
+                <label id="captchaLabel"></label>
+                <input type="text" id="captchaInput" name="captcha" required placeholder="Enter answer">
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button type="submit">Login</button>
+            <div class="login-links">
+                <a href="login.html">Admin Login</a>
+                <a href="teacher_login.html">Teacher Login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html> 

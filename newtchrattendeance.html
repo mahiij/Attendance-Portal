@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Attendance</title>
+  <link rel="stylesheet" href="teacher_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', Arial, sans-serif; background: linear-gradient(120deg, #f0f7ff 60%, #dbeafe 100%); min-height: 100vh; }
+    .attendance-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+      padding: 0;
+      display: flex;
+      min-height: 600px;
+    }
+    .attendance-sidebar {
+      width: 200px;
+      background: linear-gradient(160deg, #7c3aed 60%, #6366f1 100%);
+      border-radius: 16px 0 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 36px 0 0 0;
+    }
+    .attendance-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      align-items: stretch;
+    }
+    .attendance-tab {
+      padding: 16px 0;
+      border-radius: 0 20px 20px 0;
+      background: transparent;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 1.1em;
+      text-align: left;
+      transition: background 0.2s, color 0.2s;
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 32px;
+    }
+    .attendance-tab.active {
+      background: #ede9fe;
+      color: #4f46e5;
+    }
+    .attendance-main {
+      flex: 1;
+      padding: 36px 40px 32px 40px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .attendance-section { display: none; }
+    .attendance-section.active { display: block; }
+    .student-table-card { background: #f9fafb; border-radius: 12px; box-shadow: 0 2px 8px rgba(37,99,235,0.07); padding: 0; margin-top: 18px; max-height: 250px; overflow-y: auto; }
+    .student-table { width: 100%; border-collapse: collapse; font-family: 'Inter', Arial, sans-serif; }
+    .student-table th, .student-table td { padding: 10px 12px; border-bottom: 1px solid #e0e7ef; text-align: left; font-size: 1em; }
+    .student-table th { background: #f0f7ff; color: #2563eb; font-weight: 700; position: sticky; top: 0; z-index: 1; }
+    .student-table tr:last-child td { border-bottom: none; }
+    .attendance-actions { margin: 18px 0 10px 0; display: flex; gap: 12px; }
+    .attendance-actions button { background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.2s; box-shadow: 0 2px 8px rgba(37,99,235,0.10); font-family: 'Inter', Arial, sans-serif; }
+    .attendance-actions button:hover { background: linear-gradient(90deg, #1e40af 60%, #3b82f6 100%); transform: translateY(-2px) scale(1.04); }
+    .latest-attendance-card { background: #f9fafb; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 16px; margin-top: 18px; max-height: 150px; overflow-y: auto; }
+    .latest-attendance-card ul { margin: 0 0 12px 18px; padding: 0; list-style: disc inside; }
+    .latest-attendance-card li { margin-bottom: 4px; }
+    .mark-all-btn {
+      background: linear-gradient(90deg, #10b981 60%, #34d399 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      margin-right: 10px;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.10);
+    }
+    .mark-all-btn:hover {
+      background: linear-gradient(90deg, #059669 60%, #10b981 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .generate-report-btn {
+      background: linear-gradient(90deg, #f59e42 60%, #fbbf24 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      margin-right: 10px;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(245,158,66,0.10);
+    }
+    .generate-report-btn:hover {
+      background: linear-gradient(90deg, #ea580c 60%, #f59e42 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .attendance-report-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.3);
+      align-items: center; justify-content: center;
+    }
+    .attendance-report-content {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 95vw;
+      margin: auto;
+      margin-top: 40px;
+      padding: 32px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .close-report-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .close-report-btn:hover { color: #2563eb; }
+    .previous-reports-modal {
+      display: none;
+      position: fixed;
+      z-index: 2100;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.3);
+      align-items: center; justify-content: center;
+    }
+    .previous-reports-content {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 95vw;
+      margin: auto;
+      margin-top: 40px;
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      position: relative;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .close-previous-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .close-previous-btn:hover { color: #2563eb; }
+    .previous-reports-list button {
+      display: block;
+      width: 100%;
+      margin-bottom: 8px;
+      background: #f0f7ff;
+      color: #2563eb;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 0;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .previous-reports-list button:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+    @media (max-width: 1100px) { .attendance-container { flex-direction: column; } .attendance-main { padding: 18px 4vw 18px 4vw; } .attendance-sidebar { border-radius: 16px 16px 0 0; width: 100%; flex-direction: row; padding: 0; } .attendance-tabs { flex-direction: row; gap: 8px; } .attendance-tab { border-radius: 8px 8px 0 0; padding: 10px 0 10px 24px; } }
+  </style>
+</head>
+<body>
+  <div class="attendance-container">
+    <div class="attendance-sidebar">
+      <div style="color:#fff; font-size:1.4em; font-weight:700; text-align:center; margin-bottom:32px; letter-spacing:1px;">Teacher Attendance</div>
+      <div class="attendance-tabs">
+        <button class="attendance-tab active" data-section="A">Section A</button>
+        <button class="attendance-tab" data-section="B">Section B</button>
+        <button class="attendance-tab" data-section="C">Section C</button>
+      </div>
+    </div>
+    <div class="attendance-main">
+      <div class="attendance-section active" id="sectionA">
+        <div style="margin-bottom:10px;">
+          <label for="dateA"><strong>Date:</strong></label>
+          <input type="date" id="dateA" min="2025-07-01" max="2026-07-31" style="padding:6px 12px;font-size:1em;">
+        </div>
+        <button class="mark-all-btn" onclick="markAllPresent('A')">Mark All Present</button>
+        <button class="generate-report-btn" onclick="showAttendanceReport('A')">Generate Report</button>
+        <button class="generate-report-btn" onclick="showPreviousReports('A')">View Previous Reports</button>
+        <div class="student-table-card">
+          <table class="student-table">
+            <thead>
+              <tr><th>Sl No.</th><th>Roll Number</th><th>Name of the Student</th><th>Present</th><th>Absent</th></tr>
+            </thead>
+            <tbody id="studentsA"></tbody>
+          </table>
+        </div>
+        <div class="attendance-actions">
+          <button onclick="submitAttendance('A')">Submit Attendance</button>
+          <button onclick="showLatestAttendance('A')">View Latest Attendance</button>
+        </div>
+        <div class="latest-attendance-card" id="latestAttendanceA" style="display:none;"></div>
+      </div>
+      <div class="attendance-section" id="sectionB">
+        <div style="margin-bottom:10px;">
+          <label for="dateB"><strong>Date:</strong></label>
+          <input type="date" id="dateB" min="2025-07-01" max="2026-07-31" style="padding:6px 12px;font-size:1em;">
+        </div>
+        <button class="mark-all-btn" onclick="markAllPresent('B')">Mark All Present</button>
+        <button class="generate-report-btn" onclick="showAttendanceReport('B')">Generate Report</button>
+        <button class="generate-report-btn" onclick="showPreviousReports('B')">View Previous Reports</button>
+        <div class="student-table-card">
+          <table class="student-table">
+            <thead>
+              <tr><th>Sl No.</th><th>Roll Number</th><th>Name of the Student</th><th>Present</th><th>Absent</th></tr>
+            </thead>
+            <tbody id="studentsB"></tbody>
+          </table>
+        </div>
+        <div class="attendance-actions">
+          <button onclick="submitAttendance('B')">Submit Attendance</button>
+          <button onclick="showLatestAttendance('B')">View Latest Attendance</button>
+        </div>
+        <div class="latest-attendance-card" id="latestAttendanceB" style="display:none;"></div>
+      </div>
+      <div class="attendance-section" id="sectionC">
+        <div style="margin-bottom:10px;">
+          <label for="dateC"><strong>Date:</strong></label>
+          <input type="date" id="dateC" min="2025-07-01" max="2026-07-31" style="padding:6px 12px;font-size:1em;">
+        </div>
+        <button class="mark-all-btn" onclick="markAllPresent('C')">Mark All Present</button>
+        <button class="generate-report-btn" onclick="showAttendanceReport('C')">Generate Report</button>
+        <button class="generate-report-btn" onclick="showPreviousReports('C')">View Previous Reports</button>
+        <div class="student-table-card">
+          <table class="student-table">
+            <thead>
+              <tr><th>Sl No.</th><th>Roll Number</th><th>Name of the Student</th><th>Present</th><th>Absent</th></tr>
+            </thead>
+            <tbody id="studentsC"></tbody>
+          </table>
+        </div>
+        <div class="attendance-actions">
+          <button onclick="submitAttendance('C')">Submit Attendance</button>
+          <button onclick="showLatestAttendance('C')">View Latest Attendance</button>
+        </div>
+        <div class="latest-attendance-card" id="latestAttendanceC" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Attendance Report Modal -->
+  <div id="attendanceReportModal" class="attendance-report-modal">
+    <div class="attendance-report-content">
+      <button class="close-report-btn" onclick="closeAttendanceReport()">&times;</button>
+      <h2 id="attendanceReportTitle" style="color:#2563eb;">Attendance Report</h2>
+      <div id="attendanceReportTable">Loading...</div>
+    </div>
+  </div>
+  <!-- Previous Reports Modal -->
+  <div id="previousReportsModal" class="previous-reports-modal">
+    <div class="previous-reports-content">
+      <button class="close-previous-btn" onclick="closePreviousReports()">&times;</button>
+      <h2 style="color:#2563eb;">Previous Attendance Reports</h2>
+      <div id="previousReportsList">Loading...</div>
+    </div>
+  </div>
+  <script>
+    // Example student data for each section
+    const studentsA = [
+      { rollNo: "A001", name: "Aarav Sharma" },
+      { rollNo: "A002", name: "Aanya Mehta" },
+      { rollNo: "A003", name: "Rohan Verma" },
+      { rollNo: "A004", name: "Sneha Reddy" },
+      { rollNo: "A005", name: "Karan Kapoor" },
+      { rollNo: "A006", name: "Priya Nair" },
+      { rollNo: "A007", name: "Aditya Iyer" },
+      { rollNo: "A008", name: "Anjali Desai" },
+      { rollNo: "A009", name: "Vivek Choudhary" },
+      { rollNo: "A010", name: "Meera Joshi" },
+      { rollNo: "A011", name: "Aryan Malhotra" },
+      { rollNo: "A012", name: "Isha Patil" },
+      { rollNo: "A013", name: "Nikhil Saxena" },
+      { rollNo: "A014", name: "Swathi Bansal" },
+      { rollNo: "A015", name: "Rahul Rao" },
+      { rollNo: "A016", name: "Kavya Bhatt" },
+      { rollNo: "A017", name: "Manish Agarwal" },
+      { rollNo: "A018", name: "Divya Shetty" },
+      { rollNo: "A019", name: "Sagar Tripathi" },
+      { rollNo: "A020", name: "Neha Dubey" },
+      { rollNo: "A021", name: "Arjun Sinha" },
+      { rollNo: "A022", name: "Pooja Yadav" },
+      { rollNo: "A023", name: "Harsh Kulkarni" },
+      { rollNo: "A024", name: "Shruti Jain" },
+      { rollNo: "A025", name: "Siddharth Menon" },
+      { rollNo: "A026", name: "Ritu Chatterjee" },
+      { rollNo: "A027", name: "Yash Goel" },
+      { rollNo: "A028", name: "Tanya Pillai" },
+      { rollNo: "A029", name: "Suraj Bhatia" },
+      { rollNo: "A030", name: "Bhavya Rathi" },
+      { rollNo: "A031", name: "Om Salunkhe" },
+      { rollNo: "A032", name: "Nivedita Basu" },
+      { rollNo: "A033", name: "Raj Thakur" },
+      { rollNo: "A034", name: "Keerthi Ranganathan" },
+      { rollNo: "A035", name: "Tushar Khandelwal" },
+      { rollNo: "A036", name: "Vaishnavi Dey" },
+      { rollNo: "A037", name: "Varun Joshi" },
+      { rollNo: "A038", name: "Rhea Anand" },
+      { rollNo: "A039", name: "Sameer Khatri" },
+      { rollNo: "A040", name: "Ananya Sengupta" },
+      { rollNo: "A041", name: "Dhruv Ghosh" },
+      { rollNo: "A042", name: "Jhanvi Nayak" },
+      { rollNo: "A043", name: "Abhay Barot" },
+      { rollNo: "A044", name: "Sanjana Mishra" },
+      { rollNo: "A045", name: "Shreyas Pawar" },
+      { rollNo: "A046", name: "Aishwarya Shukla" },
+      { rollNo: "A047", name: "Vinay Solanki" },
+      { rollNo: "A048", name: "Trisha Das" },
+      { rollNo: "A049", name: "Kunal Bhargava" },
+      { rollNo: "A050", name: "Srishti Lohia" },
+      { rollNo: "A051", name: "Rohit Tiwari" },
+      { rollNo: "A052", name: "Malvika Kohli" },
+      { rollNo: "A053", name: "Tejas Sawant" },
+      { rollNo: "A054", name: "Harini Iyer" },
+      { rollNo: "A055", name: "Akash Jadhav" },
+      { rollNo: "A056", name: "Ishita Vyas" },
+      { rollNo: "A057", name: "Pranav Krishnan" },
+      { rollNo: "A058", name: "Nikita Mahajan" },
+      { rollNo: "A059", name: "Ayush Dugar" },
+      { rollNo: "A060", name: "Sakshi Rawat" }
+    ];
+    const studentsB = [
+      { rollNo: "B001", name: "Rahul Singh" },
+      { rollNo: "B002", name: "Priya Patel" },
+      { rollNo: "B003", name: "Vikas Jain" },
+      { rollNo: "B004", name: "Simran Kaur" },
+      { rollNo: "B005", name: "Amit Sahu" },
+      { rollNo: "B006", name: "Student B6" },
+      { rollNo: "B007", name: "Student B7" },
+      { rollNo: "B008", name: "Student B8" },
+      { rollNo: "B009", name: "Student B9" },
+      { rollNo: "B010", name: "Student B10" },
+      { rollNo: "B011", name: "Student B11" },
+      { rollNo: "B012", name: "Student B12" },
+      { rollNo: "B013", name: "Student B13" },
+      { rollNo: "B014", name: "Student B14" },
+      { rollNo: "B015", name: "Student B15" },
+      { rollNo: "B016", name: "Student B16" },
+      { rollNo: "B017", name: "Student B17" },
+      { rollNo: "B018", name: "Student B18" },
+      { rollNo: "B019", name: "Student B19" },
+      { rollNo: "B020", name: "Student B20" },
+      { rollNo: "B021", name: "Student B21" },
+      { rollNo: "B022", name: "Student B22" },
+      { rollNo: "B023", name: "Student B23" },
+      { rollNo: "B024", name: "Student B24" },
+      { rollNo: "B025", name: "Student B25" },
+      { rollNo: "B026", name: "Student B26" },
+      { rollNo: "B027", name: "Student B27" },
+      { rollNo: "B028", name: "Student B28" },
+      { rollNo: "B029", name: "Student B29" },
+      { rollNo: "B030", name: "Student B30" },
+      { rollNo: "B031", name: "Student B31" },
+      { rollNo: "B032", name: "Student B32" },
+      { rollNo: "B033", name: "Student B33" },
+      { rollNo: "B034", name: "Student B34" },
+      { rollNo: "B035", name: "Student B35" },
+      { rollNo: "B036", name: "Student B36" },
+      { rollNo: "B037", name: "Student B37" },
+      { rollNo: "B038", name: "Student B38" },
+      { rollNo: "B039", name: "Student B39" },
+      { rollNo: "B040", name: "Student B40" },
+      { rollNo: "B041", name: "Student B41" },
+      { rollNo: "B042", name: "Student B42" },
+      { rollNo: "B043", name: "Student B43" },
+      { rollNo: "B044", name: "Student B44" },
+      { rollNo: "B045", name: "Student B45" },
+      { rollNo: "B046", name: "Student B46" },
+      { rollNo: "B047", name: "Student B47" },
+      { rollNo: "B048", name: "Student B48" },
+      { rollNo: "B049", name: "Student B49" },
+      { rollNo: "B050", name: "Student B50" },
+      { rollNo: "B051", name: "Student B51" },
+      { rollNo: "B052", name: "Student B52" },
+      { rollNo: "B053", name: "Student B53" },
+      { rollNo: "B054", name: "Student B54" },
+      { rollNo: "B055", name: "Student B55" },
+      { rollNo: "B056", name: "Student B56" },
+      { rollNo: "B057", name: "Student B57" },
+      { rollNo: "B058", name: "Student B58" },
+      { rollNo: "B059", name: "Student B59" },
+      { rollNo: "B060", name: "Student B60" }
+    ];
+    const studentsC = [
+      { rollNo: "C001", name: "Neha Gupta" },
+      { rollNo: "C002", name: "Ravi Kumar" },
+      { rollNo: "C003", name: "Sonal Joshi" },
+      { rollNo: "C004", name: "Deepak Yadav" },
+      { rollNo: "C005", name: "Megha Shah" },
+      { rollNo: "C006", name: "Student C6" },
+      { rollNo: "C007", name: "Student C7" },
+      { rollNo: "C008", name: "Student C8" },
+      { rollNo: "C009", name: "Student C9" },
+      { rollNo: "C010", name: "Student C10" },
+      { rollNo: "C011", name: "Student C11" },
+      { rollNo: "C012", name: "Student C12" },
+      { rollNo: "C013", name: "Student C13" },
+      { rollNo: "C014", name: "Student C14" },
+      { rollNo: "C015", name: "Student C15" },
+      { rollNo: "C016", name: "Student C16" },
+      { rollNo: "C017", name: "Student C17" },
+      { rollNo: "C018", name: "Student C18" },
+      { rollNo: "C019", name: "Student C19" },
+      { rollNo: "C020", name: "Student C20" },
+      { rollNo: "C021", name: "Student C21" },
+      { rollNo: "C022", name: "Student C22" },
+      { rollNo: "C023", name: "Student C23" },
+      { rollNo: "C024", name: "Student C24" },
+      { rollNo: "C025", name: "Student C25" },
+      { rollNo: "C026", name: "Student C26" },
+      { rollNo: "C027", name: "Student C27" },
+      { rollNo: "C028", name: "Student C28" },
+      { rollNo: "C029", name: "Student C29" },
+      { rollNo: "C030", name: "Student C30" },
+      { rollNo: "C031", name: "Student C31" },
+      { rollNo: "C032", name: "Student C32" },
+      { rollNo: "C033", name: "Student C33" },
+      { rollNo: "C034", name: "Student C34" },
+      { rollNo: "C035", name: "Student C35" },
+      { rollNo: "C036", name: "Student C36" },
+      { rollNo: "C037", name: "Student C37" },
+      { rollNo: "C038", name: "Student C38" },
+      { rollNo: "C039", name: "Student C39" },
+      { rollNo: "C040", name: "Student C40" },
+      { rollNo: "C041", name: "Student C41" },
+      { rollNo: "C042", name: "Student C42" },
+      { rollNo: "C043", name: "Student C43" },
+      { rollNo: "C044", name: "Student C44" },
+      { rollNo: "C045", name: "Student C45" },
+      { rollNo: "C046", name: "Student C46" },
+      { rollNo: "C047", name: "Student C47" },
+      { rollNo: "C048", name: "Student C48" },
+      { rollNo: "C049", name: "Student C49" },
+      { rollNo: "C050", name: "Student C50" },
+      { rollNo: "C051", name: "Student C51" },
+      { rollNo: "C052", name: "Student C52" },
+      { rollNo: "C053", name: "Student C53" },
+      { rollNo: "C054", name: "Student C54" },
+      { rollNo: "C055", name: "Student C55" },
+      { rollNo: "C056", name: "Student C56" },
+      { rollNo: "C057", name: "Student C57" },
+      { rollNo: "C058", name: "Student C58" },
+      { rollNo: "C059", name: "Student C59" },
+      { rollNo: "C060", name: "Student C60" }
+    ];
+    function renderStudents(section, students) {
+      const tbody = document.getElementById('students' + section);
+      tbody.innerHTML = '';
+      students.forEach((student, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx + 1}</td><td>${student.rollNo}</td><td>${student.name}</td>` +
+          `<td style='text-align:center;'><input type='radio' name='attendance-${section}-${student.rollNo}' value='Present' required></td>` +
+          `<td style='text-align:center;'><input type='radio' name='attendance-${section}-${student.rollNo}' value='Absent'></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    renderStudents('A', studentsA);
+    renderStudents('B', studentsB);
+    renderStudents('C', studentsC);
+    // Tab switching logic
+    document.querySelectorAll('.attendance-tab').forEach(tab => {
+      tab.onclick = function() {
+        document.querySelectorAll('.attendance-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.attendance-section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('section' + tab.dataset.section).classList.add('active');
+      };
+    });
+    // Attendance submission and report logic
+    function getSelectedDate(section) {
+      const dateInput = document.getElementById('date' + section);
+      return dateInput && dateInput.value ? dateInput.value : new Date().toISOString().split('T')[0];
+    }
+    // Update submitAttendance to save by date
+    function submitAttendance(section) {
+      const students = section === 'A' ? studentsA : section === 'B' ? studentsB : studentsC;
+      const present = [], absent = [];
+      let allMarked = true;
+      students.forEach(student => {
+        const val = document.querySelector(`input[name='attendance-${section}-${student.rollNo}']:checked`);
+        if (!val) allMarked = false;
+        else if (val.value === 'Present') present.push({ roll: student.rollNo, name: student.name });
+        else absent.push({ roll: student.rollNo, name: student.name });
+      });
+      if (!allMarked) { alert('Please mark attendance for all students.'); return; }
+      const date = getSelectedDate(section);
+      localStorage.setItem(`attendance${section}_${date}`, JSON.stringify({ present, absent }));
+      // Also update latest for convenience
+      localStorage.setItem(`latestAttendance${section}`, JSON.stringify({ present, absent }));
+      alert('Attendance submitted for Section ' + section + ' on ' + date + '!');
+    }
+    function showLatestAttendance(section) {
+      const card = document.getElementById('latestAttendance' + section);
+      const data = JSON.parse(localStorage.getItem('latestAttendance' + section) || 'null');
+      if (!data) { card.innerHTML = '<em>No attendance data available.</em>'; card.style.display = 'block'; return; }
+      let html = '<strong>Present:</strong><ul>';
+      if (data.present.length === 0) html += '<li>None</li>';
+      else html += data.present.map(s => `<li>${s.roll} - ${s.name}</li>`).join('');
+      html += '</ul><strong>Absent:</strong><ul>';
+      if (data.absent.length === 0) html += '<li>None</li>';
+      else html += data.absent.map(s => `<li>${s.roll} - ${s.name}</li>`).join('');
+      html += '</ul>';
+      card.innerHTML = html;
+      card.style.display = 'block';
+      card.scrollTop = 0;
+    }
+    function markAllPresent(section) {
+      const students = section === 'A' ? studentsA : section === 'B' ? studentsB : studentsC;
+      students.forEach(student => {
+        const presentRadio = document.querySelector(`input[name='attendance-${section}-${student.rollNo}'][value='Present']`);
+        if (presentRadio) presentRadio.checked = true;
+      });
+    }
+    // Update showAttendanceReport to use selected date
+    function showAttendanceReport(section) {
+      const modal = document.getElementById('attendanceReportModal');
+      const title = document.getElementById('attendanceReportTitle');
+      const tableDiv = document.getElementById('attendanceReportTable');
+      const date = getSelectedDate(section);
+      title.textContent = `Attendance Report - Section ${section} (${date})`;
+      const data = JSON.parse(localStorage.getItem('attendance' + section + '_' + date) || 'null');
+      if (!data) {
+        tableDiv.innerHTML = '<em>No attendance data available for this date.</em>';
+        modal.style.display = 'flex';
+        return;
+      }
+      let html = '<table style="width:100%;border-collapse:collapse;">';
+      html += '<thead><tr><th style="text-align:left;padding:8px;">Roll No</th><th style="text-align:left;padding:8px;">Name</th><th style="text-align:left;padding:8px;">Status</th></tr></thead><tbody>';
+      data.present.forEach(s => {
+        html += `<tr><td style='padding:8px;'>${s.roll}</td><td style='padding:8px;'>${s.name}</td><td style='padding:8px;color:#22c55e;'>Present</td></tr>`;
+      });
+      data.absent.forEach(s => {
+        html += `<tr><td style='padding:8px;'>${s.roll}</td><td style='padding:8px;'>${s.name}</td><td style='padding:8px;color:#ef4444;'>Absent</td></tr>`;
+      });
+      html += '</tbody></table>';
+      tableDiv.innerHTML = html;
+      modal.style.display = 'flex';
+    }
+    function closeAttendanceReport() {
+      document.getElementById('attendanceReportModal').style.display = 'none';
+    }
+    function showPreviousReports(section) {
+      const modal = document.getElementById('previousReportsModal');
+      const listDiv = document.getElementById('previousReportsList');
+      // Find all attendance keys for this section
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('attendance' + section + '_'));
+      if (keys.length === 0) {
+        listDiv.innerHTML = '<em>No previous attendance records found.</em>';
+        modal.style.display = 'flex';
+        return;
+      }
+      // Extract dates and sort descending
+      const dates = keys.map(k => k.split('_')[1]).sort((a,b) => b.localeCompare(a));
+      let html = '<div class="previous-reports-list">';
+      dates.forEach(date => {
+        html += `<button onclick="showAttendanceReport('${section}','${date}')">${date}</button>`;
+      });
+      html += '</div>';
+      listDiv.innerHTML = html;
+      modal.style.display = 'flex';
+    }
+    function closePreviousReports() {
+      document.getElementById('previousReportsModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html> 

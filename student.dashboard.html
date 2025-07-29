@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="studentdashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-bg">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://www.vvitu.ac.in/src/assets/images/VVIT_logo.png" alt="VVIT Logo" class="sidebar-logo-img">
+      </div>
+      <nav>
+        <ul>
+          <li class="active"><a href="profile.html">Profile</a></li>
+          <li><a href="attendance.html">Attendance</a></li>
+          <li><a href="certifications.html">Certifications</a></li>
+          <li><a href="semsters.html">Semester</a></li>
+          <li><a href="assignment.html">Assignment</a></li>
+          <li><a href="todo.html">Task List</a></li>
+          <li><a href="notes.html">Notes</a></li>
+          <li><a href="result.html">Results</a></li>
+          <li><a href="index.html">Log out</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="greeting">Hello Norah</div>
+        <div class="user-info">
+          <span class="user-name">Norah</span>
+          <span class="user-role">Student (A001)</span>
+          <img src="https://i.pinimg.com/736x/52/61/bd/5261bd492ef52666d60258a067239007.jpg" class="user-avatar" />
+        </div>
+      </header>
+      <section class="dashboard-main">
+        <!-- Main dashboard content -->
+        <div class="card" id="welcomeCard">
+          <h2>Welcome to Student Dashboard</h2>
+          <p>There are no secrets to success.<br><br><br> It is the result of preparation,<br><br><br>hard work, and learning from failure..</p>
+        </div>
+        <div class="card" id="attendanceCalendarSection" style="margin-top:32px; display:none;">
+          <h2>Attendance Calendar</h2>
+          <div style="font-size:1.1em;font-weight:600;margin-bottom:8px;">July 2025</div>
+          <div class="attendance-legend" style="margin-bottom:12px;">
+            <span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;margin-right:6px;vertical-align:middle;"></span> Present
+            <span style="display:inline-block;width:18px;height:18px;background:#ef4444;border-radius:4px;margin:0 12px 0 18px;vertical-align:middle;"></span> Absent
+            <span style="display:inline-block;width:18px;height:18px;background:#f59e42;border-radius:4px;margin:0 12px 0 18px;vertical-align:middle;"></span> Holiday
+            <span style="display:inline-block;width:18px;height:18px;background:#a78bfa;border-radius:4px;margin:0 12px 0 18px;vertical-align:middle;"></span> Sunday
+          </div>
+          <table class="attendance-calendar" style="width:100%;border-collapse:collapse;text-align:center;">
+            <thead>
+              <tr>
+                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+              </tr>
+            </thead>
+            <tbody id="calendarBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
+<script>
+// Demo attendance data for July 2025
+const attendanceData = {
+  '2025-07-01': 'present', '2025-07-02': 'present', '2025-07-03': 'absent', '2025-07-04': 'present', '2025-07-05': 'holiday',
+  '2025-07-06': 'present', '2025-07-07': 'present', '2025-07-08': 'absent', '2025-07-09': 'present', '2025-07-10': 'present',
+  '2025-07-11': 'holiday', '2025-07-12': 'present', '2025-07-13': 'present', '2025-07-14': 'absent', '2025-07-15': 'present',
+  '2025-07-16': 'present', '2025-07-17': 'present', '2025-07-18': 'holiday', '2025-07-19': 'present', '2025-07-20': 'absent',
+  '2025-07-21': 'present', '2025-07-22': 'present', '2025-07-23': 'present', '2025-07-24': 'holiday', '2025-07-25': 'present',
+  '2025-07-26': 'present', '2025-07-27': 'absent', '2025-07-28': 'present', '2025-07-29': 'present', '2025-07-30': 'holiday',
+  '2025-07-31': 'present'
+};
+function renderCalendar() {
+  const daysInMonth = 31;
+  const firstDay = new Date(2025, 6, 1).getDay(); // July 2025
+  let html = '';
+  let day = 1;
+  for (let week = 0; week < 6; week++) {
+    html += '<tr>';
+    for (let d = 0; d < 7; d++) {
+      if ((week === 0 && d < firstDay) || day > daysInMonth) {
+        html += '<td></td>';
+      } else {
+        const dateStr = `2025-07-${day.toString().padStart(2,'0')}`;
+        let status = attendanceData[dateStr] || '';
+        let color = '';
+        if (d === 0) color = '#a78bfa'; // Sunday is purple
+        else if (status === 'present') color = '#22c55e';
+        else if (status === 'absent') color = '#ef4444';
+        else if (status === 'holiday') color = '#f59e42';
+        html += `<td style='background:${color};border-radius:6px;cursor:pointer;' onclick='showAttendanceDetail("${dateStr}","${status}")'>${day}</td>`;
+        day++;
+      }
+    }
+    html += '</tr>';
+    if (day > daysInMonth) break;
+  }
+  document.getElementById('calendarBody').innerHTML = html;
+}
+function showAttendanceDetail(date, status) {
+  let statusText = '';
+  if (status === 'present') statusText = 'Present (Green)';
+  else if (status === 'absent') statusText = 'Absent (Red)';
+  else if (status === 'holiday') statusText = 'Holiday (Orange)';
+  else if (new Date(date).getDay() === 0) statusText = 'Sunday (Purple)';
+  else statusText = 'No record';
+  alert(`Date: ${date}\nStatus: ${statusText}`);
+}
+// Sidebar Attendance click logic
+const sidebarLinks = document.querySelectorAll('.sidebar nav ul li a');
+sidebarLinks.forEach(link => {
+  if (link.textContent.trim() === 'Attendance') {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('welcomeCard').style.display = 'none';
+      document.getElementById('attendanceCalendarSection').style.display = 'block';
+      renderCalendar();
+    });
+  } else {
+    link.addEventListener('click', function() {
+      document.getElementById('attendanceCalendarSection').style.display = 'none';
+      document.getElementById('welcomeCard').style.display = 'block';
+    });
+  }
+});
+</script>

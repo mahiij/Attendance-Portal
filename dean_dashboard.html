@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Dashboard - SRM System</title>
+    <link rel="stylesheet" href="dean_dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="https://i.pinimg.com/736x/f7/cf/28/f7cf289d18863f4c8e5b783338d12846.jpg" alt="VVIT University Logo" class="university-logo">
+                </div>
+                <h2>HOD Portal</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" onclick="showSection('pending')">
+                        <i class="fas fa-clock"></i>
+                        <span>Pending Review</span>
+                    </li>
+                    <li class="nav-item" onclick="showSection('approved')">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Approved Students</span>
+                    </li>
+                                         <li class="nav-item" onclick="showSection('forwarded')">
+                         <i class="fas fa-share"></i>
+                         <span>Forwarded to Dean</span>
+                     </li>
+                    <li class="nav-item" onclick="showSection('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                                         <div class="user-details">
+                         <h4>HOD</h4>
+                         <p>Department Head</p>
+                     </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="section-title">Pending Review</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search students...">
+                    </div>
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content">
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="openModal('addStudent')">
+                            <i class="fas fa-user-plus"></i>
+                            Add Student
+                        </button>
+                        <button class="action-btn" onclick="openModal('generateReport')">
+                            <i class="fas fa-file-export"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pending Review Section -->
+                <div id="pending-section" class="section active">
+                    <div class="section-header">
+                                                 <h2>Students Pending Review</h2>
+                         <p>Review students for department approval</p>
+                    </div>
+                    
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="pending-count">5</h3>
+                                <p>Pending Review</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="approved-count">12</h3>
+                                <p>Approved Today</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="rejected-count">2</h3>
+                                <p>Rejected Today</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Year</th>
+                                    <th>Forwarded Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-table-body">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Approved Students Section -->
+                <div id="approved-section" class="section">
+                    <div class="section-header">
+                                                 <h2>Approved Students</h2>
+                         <p>Students approved by HOD</p>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Year</th>
+                                    <th>Approved Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approved-table-body">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Forwarded to Admin Section -->
+                <div id="forwarded-section" class="section">
+                    <div class="section-header">
+                                                 <h2>Forwarded to Dean</h2>
+                         <p>Students forwarded to Dean for final approval</p>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Year</th>
+                                    <th>Forwarded Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="forwarded-table-body">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reports-section" class="section">
+                    <div class="section-header">
+                        <h2>Reports & Analytics</h2>
+                        <p>Generate reports and view analytics</p>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <div class="report-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3>Approval Report</h3>
+                            <p>Generate monthly approval statistics</p>
+                            <button class="report-btn" onclick="generateApprovalReport()">Generate Report</button>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>Department Analytics</h3>
+                            <p>View department-wise approval rates</p>
+                            <button class="report-btn" onclick="viewDepartmentAnalytics()">View Analytics</button>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h3>Export Data</h3>
+                            <p>Export student data to Excel/PDF</p>
+                            <button class="report-btn" onclick="exportStudentData()">Export</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration
+        let pendingStudents = [
+            { id: 1, name: "John Doe", rollNo: "CS001", department: "CSE", year: "2", status: "pending", date: "2024-01-15" },
+            { id: 2, name: "Jane Smith", rollNo: "CS002", department: "CSE", year: "3", status: "pending", date: "2024-01-14" },
+            { id: 3, name: "Mike Johnson", rollNo: "CS003", department: "CSE", year: "1", status: "pending", date: "2024-01-13" },
+            { id: 4, name: "Sarah Wilson", rollNo: "CS004", department: "CSE", year: "4", status: "pending", date: "2024-01-12" },
+            { id: 5, name: "David Brown", rollNo: "CS005", department: "CSE", year: "2", status: "pending", date: "2024-01-11" }
+        ];
+
+        let approvedStudents = [
+            { id: 6, name: "Emily Davis", rollNo: "CS006", department: "CSE", year: "3", status: "approved", date: "2024-01-10" },
+            { id: 7, name: "Robert Miller", rollNo: "CS007", department: "CSE", year: "1", status: "approved", date: "2024-01-09" }
+        ];
+
+        let forwardedStudents = [
+            { id: 8, name: "Lisa Anderson", rollNo: "CS008", department: "CSE", year: "4", status: "forwarded", date: "2024-01-08" },
+            { id: 9, name: "James Taylor", rollNo: "CS009", department: "CSE", year: "2", status: "forwarded", date: "2024-01-07" }
+        ];
+
+        function openModal(modalType) {
+            switch(modalType) {
+                case 'addStudent':
+                    showStudentModal();
+                    break;
+                case 'generateReport':
+                    showReportModal();
+                    break;
+                default:
+                    alert(`${modalType} functionality - This feature will be implemented next!`);
+            }
+        }
+
+        function showStudentModal(studentId = null) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'studentModal';
+            
+            const student = studentId ? pendingStudents.find(s => s.id === studentId) : null;
+            const isEdit = student !== null;
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>${isEdit ? 'Edit Student' : 'Add New Student'}</h2>
+                        <span class="close" onclick="closeStudentModal()">&times;</span>
+                    </div>
+                    <form id="studentForm" onsubmit="saveStudent(event, '${studentId || ''}')">
+                        <div class="form-group">
+                            <label for="studentRollNo">Roll Number *</label>
+                            <input type="text" id="studentRollNo" name="studentRollNo" value="${student ? student.rollNo : ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentName">Full Name *</label>
+                            <input type="text" id="studentName" name="studentName" value="${student ? student.name : ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentDepartment">Department *</label>
+                            <select id="studentDepartment" name="studentDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="CSE" ${student && student.department === 'CSE' ? 'selected' : ''}>Computer Science & Engineering</option>
+                                <option value="ECE" ${student && student.department === 'ECE' ? 'selected' : ''}>Electronics & Communication</option>
+                                <option value="EEE" ${student && student.department === 'EEE' ? 'selected' : ''}>Electrical & Electronics</option>
+                                <option value="ME" ${student && student.department === 'ME' ? 'selected' : ''}>Mechanical Engineering</option>
+                                <option value="CE" ${student && student.department === 'CE' ? 'selected' : ''}>Civil Engineering</option>
+                                <option value="IT" ${student && student.department === 'IT' ? 'selected' : ''}>Information Technology</option>
+                                <option value="IOT" ${student && student.department === 'IOT' ? 'selected' : ''}>Internet of Things</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentYear">Year *</label>
+                            <select id="studentYear" name="studentYear" required>
+                                <option value="">Select Year</option>
+                                <option value="1" ${student && student.year === '1' ? 'selected' : ''}>1st Year</option>
+                                <option value="2" ${student && student.year === '2' ? 'selected' : ''}>2nd Year</option>
+                                <option value="3" ${student && student.year === '3' ? 'selected' : ''}>3rd Year</option>
+                                <option value="4" ${student && student.year === '4' ? 'selected' : ''}>4th Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentEmail">Email</label>
+                            <input type="email" id="studentEmail" name="studentEmail" value="${student ? (student.email || '') : ''}" placeholder="student@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhone">Phone</label>
+                            <input type="tel" id="studentPhone" name="studentPhone" value="${student ? (student.phone || '') : ''}" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentStatus">Status *</label>
+                            <select id="studentStatus" name="studentStatus" required>
+                                <option value="pending" ${student && student.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="approved" ${student && student.status === 'approved' ? 'selected' : ''}>Approved</option>
+                                <option value="forwarded" ${student && student.status === 'forwarded' ? 'selected' : ''}>Forwarded</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="closeStudentModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">${isEdit ? 'Update Student' : 'Add Student'}</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+
+        function closeStudentModal() {
+            const modal = document.getElementById('studentModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function saveStudent(event, studentId) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const studentData = {
+                id: studentId ? parseInt(studentId) : Date.now(),
+                rollNo: formData.get('studentRollNo'),
+                name: formData.get('studentName'),
+                department: formData.get('studentDepartment'),
+                year: formData.get('studentYear'),
+                email: formData.get('studentEmail'),
+                phone: formData.get('studentPhone'),
+                status: formData.get('studentStatus'),
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            if (studentId) {
+                // Edit existing student
+                const index = pendingStudents.findIndex(s => s.id === parseInt(studentId));
+                if (index !== -1) {
+                    pendingStudents[index] = studentData;
+                }
+            } else {
+                // Add new student
+                pendingStudents.push(studentData);
+            }
+            
+            closeStudentModal();
+            alert(`Student ${studentData.name} ${studentId ? 'updated' : 'added'} successfully!`);
+            loadSectionData('pending');
+            updateStats();
+        }
+
+        function showReportModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'reportModal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Generate Reports</h2>
+                        <span class="close" onclick="closeReportModal()">&times;</span>
+                    </div>
+                    <div class="report-options">
+                        <div class="report-category">
+                            <h3>Student Reports</h3>
+                            <div class="report-grid">
+                                <div class="report-option" onclick="generateStudentReport('pending')">
+                                    <i class="fas fa-clock"></i>
+                                    <h4>Pending Students</h4>
+                                    <p>Students awaiting dean approval</p>
+                                </div>
+                                <div class="report-option" onclick="generateStudentReport('approved')">
+                                    <i class="fas fa-check-circle"></i>
+                                    <h4>Approved Students</h4>
+                                    <p>Students approved by dean</p>
+                                </div>
+                                                                 <div class="report-option" onclick="generateStudentReport('forwarded')">
+                                     <i class="fas fa-share"></i>
+                                     <h4>Forwarded Students</h4>
+                                     <p>Students forwarded to dean</p>
+                                 </div>
+                            </div>
+                        </div>
+                        
+                        <div class="report-category">
+                            <h3>Analytics Reports</h3>
+                            <div class="report-grid">
+                                <div class="report-option" onclick="generateAnalyticsReport('department')">
+                                    <i class="fas fa-building"></i>
+                                    <h4>Department Analytics</h4>
+                                    <p>Department-wise approval statistics</p>
+                                </div>
+                                <div class="report-option" onclick="generateAnalyticsReport('monthly')">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <h4>Monthly Report</h4>
+                                    <p>Monthly approval trends and statistics</p>
+                                </div>
+                                                                 <div class="report-option" onclick="generateAnalyticsReport('performance')">
+                                     <i class="fas fa-chart-line"></i>
+                                     <h4>Performance Report</h4>
+                                     <p>HOD's approval performance metrics</p>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-actions">
+                        <button class="btn-secondary" onclick="closeReportModal()">Cancel</button>
+                        <button class="btn-primary" onclick="generateAllReports()">
+                            <i class="fas fa-download"></i> Generate All Reports
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('reportModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function generateStudentReport(type) {
+            let students = [];
+            let title = '';
+            
+            switch(type) {
+                case 'pending':
+                    students = pendingStudents;
+                    title = 'Pending Students Report';
+                    break;
+                case 'approved':
+                    students = approvedStudents;
+                    title = 'Approved Students Report';
+                    break;
+                case 'forwarded':
+                    students = forwardedStudents;
+                    title = 'Forwarded Students Report';
+                    break;
+            }
+            
+            const reportData = {
+                title: title,
+                totalStudents: students.length,
+                departmentWise: {},
+                yearWise: {},
+                recentActivity: [],
+                dateRange: {
+                    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    to: new Date().toISOString().split('T')[0]
+                },
+                summary: {
+                    averageAge: '2.5 years',
+                    topDepartment: '',
+                    topYear: '',
+                    processingTime: '1-3 days'
+                }
+            };
+            
+            // Calculate department-wise and year-wise distribution
+            students.forEach(student => {
+                reportData.departmentWise[student.department] = (reportData.departmentWise[student.department] || 0) + 1;
+                reportData.yearWise[student.year] = (reportData.yearWise[student.year] || 0) + 1;
+                
+                                 // Add recent activity
+                 reportData.recentActivity.push({
+                     student: student.name,
+                     action: type === 'pending' ? 'Submitted for approval' : 
+                            type === 'approved' ? 'Approved by HOD' : 'Forwarded to dean',
+                     date: student.date,
+                     department: student.department
+                 });
+            });
+            
+            // Find top department and year
+            if (Object.keys(reportData.departmentWise).length > 0) {
+                reportData.summary.topDepartment = Object.entries(reportData.departmentWise)
+                    .sort(([,a], [,b]) => b - a)[0][0];
+            }
+            
+            if (Object.keys(reportData.yearWise).length > 0) {
+                reportData.summary.topYear = Object.entries(reportData.yearWise)
+                    .sort(([,a], [,b]) => b - a)[0][0];
+            }
+            
+            showReportPreview(title, reportData, 'student');
+        }
+
+        function generateAnalyticsReport(type) {
+            let title = '';
+            let data = {};
+            
+            switch(type) {
+                case 'department':
+                    title = 'Department Analytics Report';
+                    data = {
+                        totalStudents: pendingStudents.length + approvedStudents.length + forwardedStudents.length,
+                        departmentStats: {},
+                        approvalRates: {},
+                        topPerformers: [],
+                        recommendations: []
+                    };
+                    
+                    // Calculate department statistics
+                    const allStudents = [...pendingStudents, ...approvedStudents, ...forwardedStudents];
+                    allStudents.forEach(student => {
+                        if (!data.departmentStats[student.department]) {
+                            data.departmentStats[student.department] = { total: 0, pending: 0, approved: 0, forwarded: 0 };
+                        }
+                        data.departmentStats[student.department].total++;
+                        
+                        if (student.status === 'pending') data.departmentStats[student.department].pending++;
+                        else if (student.status === 'approved') data.departmentStats[student.department].approved++;
+                        else if (student.status === 'forwarded') data.departmentStats[student.department].forwarded++;
+                    });
+                    
+                    // Calculate approval rates and find top performers
+                    Object.entries(data.departmentStats).forEach(([dept, stats]) => {
+                        const approvalRate = stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0;
+                        data.approvalRates[dept] = approvalRate;
+                        
+                        if (stats.total >= 3) { // Only consider departments with significant data
+                            data.topPerformers.push({
+                                department: dept,
+                                approvalRate: approvalRate,
+                                totalStudents: stats.total
+                            });
+                        }
+                    });
+                    
+                    // Sort top performers and get recommendations
+                    data.topPerformers.sort((a, b) => b.approvalRate - a.approvalRate);
+                    
+                    // Generate recommendations
+                    if (data.topPerformers.length > 0) {
+                        const bestDept = data.topPerformers[0];
+                        const worstDept = data.topPerformers[data.topPerformers.length - 1];
+                        
+                        data.recommendations = [
+                            `Best performing department: ${bestDept.department} (${bestDept.approvalRate}% approval rate)`,
+                            `Focus on improving ${worstDept.department} department processes`,
+                            `Overall approval rate: ${Math.round((approvedStudents.length / data.totalStudents) * 100)}%`
+                        ];
+                    }
+                    break;
+                    
+                case 'monthly':
+                    title = 'Monthly Analytics Report';
+                    const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    
+                    data = {
+                        currentMonth: currentMonth,
+                        lastMonth: lastMonth,
+                        monthlyStats: {
+                            pending: pendingStudents.length,
+                            approved: approvedStudents.length,
+                            forwarded: forwardedStudents.length,
+                            total: pendingStudents.length + approvedStudents.length + forwardedStudents.length
+                        },
+                        trends: {
+                            approvalRate: Math.round((approvedStudents.length / (pendingStudents.length + approvedStudents.length + forwardedStudents.length)) * 100),
+                            growthRate: '+15%', // Mock data
+                            peakDay: 'Wednesday',
+                            averageDaily: Math.round((pendingStudents.length + approvedStudents.length + forwardedStudents.length) / 30)
+                        },
+                        monthlyComparison: {
+                            currentMonthTotal: pendingStudents.length + approvedStudents.length + forwardedStudents.length,
+                            lastMonthTotal: Math.round((pendingStudents.length + approvedStudents.length + forwardedStudents.length) * 0.85), // Mock comparison
+                            change: '+15%'
+                        }
+                    };
+                    break;
+                    
+                case 'performance':
+                    title = 'Performance Analytics Report';
+                    const totalProcessed = approvedStudents.length + forwardedStudents.length;
+                    const approvalRate = totalProcessed > 0 ? Math.round((approvedStudents.length / totalProcessed) * 100) : 0;
+                    
+                    data = {
+                        totalProcessed: totalProcessed,
+                        approvalRate: approvalRate,
+                        averageProcessingTime: '2.5 days',
+                        performanceMetrics: {
+                            dailyAverage: Math.round(totalProcessed / 30),
+                            weeklyAverage: Math.round(totalProcessed / 4),
+                            monthlyTarget: 150,
+                            targetAchievement: Math.round((totalProcessed / 150) * 100)
+                        },
+                        efficiencyScore: Math.round((approvalRate * 0.6) + (85 * 0.4)), // Mock efficiency calculation
+                        qualityMetrics: {
+                            accuracyRate: '98.5%',
+                            errorRate: '1.5%',
+                            satisfactionScore: '4.2/5'
+                        },
+                        recommendations: [
+                            'Maintain current approval processing speed',
+                            'Focus on reducing pending applications',
+                            'Consider implementing automated pre-screening'
+                        ]
+                    };
+                    break;
+            }
+            
+            showReportPreview(title, data, 'analytics');
+        }
+
+        function showReportPreview(title, data, type) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'reportPreviewModal';
+
+            let reportContent = '';
+
+            switch(type) {
+                case 'student':
+                    reportContent = `
+                        <div class="report-summary">
+                            <h3>Student Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.totalStudents}</span>
+                                    <span class="stat-label">Total Students</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${Object.keys(data.departmentWise).length}</span>
+                                    <span class="stat-label">Departments</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.summary.topDepartment || 'N/A'}</span>
+                                    <span class="stat-label">Top Department</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.summary.processingTime}</span>
+                                    <span class="stat-label">Avg Processing</span>
+                                </div>
+                            </div>
+
+                            <h4>Department-wise Distribution</h4>
+                            <div class="department-stats">
+                                ${Object.entries(data.departmentWise).map(([dept, count]) => `
+                                    <div class="dept-stat">
+                                        <span class="dept-name">${dept}</span>
+                                        <span class="dept-count">${count} students</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <h4>Year-wise Distribution</h4>
+                            <div class="department-stats">
+                                ${Object.entries(data.yearWise).map(([year, count]) => `
+                                    <div class="dept-stat">
+                                        <span class="dept-name">Year ${year}</span>
+                                        <span class="dept-count">${count} students</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <h4>Recent Activity (Last 5)</h4>
+                            <div class="recent-activity">
+                                ${data.recentActivity.slice(0, 5).map(activity => `
+                                    <div class="activity-item">
+                                        <span class="activity-student">${activity.student}</span>
+                                        <span class="activity-action">${activity.action}</span>
+                                        <span class="activity-date">${activity.date}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'analytics':
+                    reportContent = `
+                        <div class="report-summary">
+                            <h3>Analytics Summary</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.totalStudents || data.totalProcessed || data.monthlyStats?.pending || 0}</span>
+                                    <span class="stat-label">Total Records</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.approvalRate || data.trends?.approvalRate || 0}%</span>
+                                    <span class="stat-label">Approval Rate</span>
+                                </div>
+                            </div>
+                            
+                            ${data.departmentStats ? `
+                                <h4>Department Performance</h4>
+                                <div class="department-stats">
+                                    ${Object.entries(data.departmentStats).map(([dept, stats]) => `
+                                        <div class="dept-stat">
+                                            <span class="dept-name">${dept}</span>
+                                            <span class="dept-count">${stats.approved}/${stats.total} approved</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${data.recommendations ? `
+                                <h4>Recommendations</h4>
+                                <div class="recommendations">
+                                    ${data.recommendations.map(rec => `<p>• ${rec}</p>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'approval':
+                    reportContent = `
+                        <div class="report-summary">
+                            <h3>Approval Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.totalStudents}</span>
+                                    <span class="stat-label">Total Students</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.approvalTrends.approvalRate}%</span>
+                                    <span class="stat-label">Approval Rate</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.approvalTrends.forwardRate}%</span>
+                                    <span class="stat-label">Forward Rate</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${data.approvalTrends.pendingRate}%</span>
+                                    <span class="stat-label">Pending Rate</span>
+                                </div>
+                            </div>
+                            
+                            <h4>Department Breakdown</h4>
+                            <div class="department-stats">
+                                ${Object.entries(data.departmentBreakdown).map(([dept, stats]) => `
+                                    <div class="dept-stat">
+                                        <span class="dept-name">${dept}</span>
+                                        <span class="dept-count">${stats.approved} approved, ${stats.pending} pending, ${stats.forwarded} forwarded</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <h4>Recent Approvals</h4>
+                            <div class="recent-activity">
+                                ${data.recentApprovals.map(approval => `
+                                    <div class="activity-item">
+                                        <span class="activity-student">${approval.name}</span>
+                                        <span class="activity-action">Approved</span>
+                                        <span class="activity-date">${approval.date}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>${title}</h2>
+                        <span class="close" onclick="closeReportPreviewModal()">&times;</span>
+                    </div>
+                    <div class="report-preview-content">
+                        ${reportContent}
+                    </div>
+                    <div class="report-actions">
+                        <button class="btn-secondary" onclick="closeReportPreviewModal()">Close</button>
+                        <button class="btn-primary" onclick="downloadReport('${title}', ${JSON.stringify(data).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+
+        function closeReportPreviewModal() {
+            const modal = document.getElementById('reportPreviewModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function downloadReport(title, data) {
+            alert(`Downloading ${title} as PDF...\nThis would generate a PDF report with all the data.`);
+        }
+
+        function generateAllReports() {
+            alert('Generating all reports...\nThis would create a comprehensive report package with all analytics and student data.');
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update section title
+            const titles = {
+                'pending': 'Pending Review',
+                'approved': 'Approved Students',
+                 'forwarded': 'Forwarded to Dean',
+                'reports': 'Reports & Analytics'
+            };
+            document.getElementById('section-title').textContent = titles[sectionName];
+            
+            // Load section data
+            loadSectionData(sectionName);
+        }
+
+        function loadSectionData(sectionName) {
+            switch(sectionName) {
+                case 'pending':
+                    loadPendingTable();
+                    break;
+                case 'approved':
+                    loadApprovedTable();
+                    break;
+                case 'forwarded':
+                    loadForwardedTable();
+                    break;
+            }
+        }
+
+        function loadPendingTable() {
+            const tbody = document.getElementById('pending-table-body');
+            tbody.innerHTML = '';
+            
+            pendingStudents.forEach(student => {
+                const row = `
+                    <tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${student.department}</td>
+                        <td>${student.year}</td>
+                        <td>${student.date}</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>
+                            <button class="action-btn approve" onclick="approveStudent(${student.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="action-btn reject" onclick="rejectStudent(${student.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            document.getElementById('pending-count').textContent = pendingStudents.length;
+        }
+
+        function loadApprovedTable() {
+            const tbody = document.getElementById('approved-table-body');
+            tbody.innerHTML = '';
+            
+            approvedStudents.forEach(student => {
+                const row = `
+                    <tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${student.department}</td>
+                        <td>${student.year}</td>
+                        <td>${student.date}</td>
+                        <td><span class="status-badge approved">Approved</span></td>
+                        <td>
+                                                         <button class="action-btn forward" onclick="forwardToAdmin(${student.id})">
+                                 <i class="fas fa-share"></i> Forward to Dean
+                             </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function loadForwardedTable() {
+            const tbody = document.getElementById('forwarded-table-body');
+            tbody.innerHTML = '';
+            
+            forwardedStudents.forEach(student => {
+                const row = `
+                    <tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${student.department}</td>
+                        <td>${student.year}</td>
+                        <td>${student.date}</td>
+                        <td><span class="status-badge forwarded">Forwarded</span></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function approveStudent(id) {
+            const student = pendingStudents.find(s => s.id === id);
+            if (student) {
+                student.status = 'approved';
+                student.date = new Date().toISOString().split('T')[0];
+                approvedStudents.push(student);
+                pendingStudents = pendingStudents.filter(s => s.id !== id);
+                
+                alert(`Student ${student.name} approved successfully!`);
+                loadSectionData('pending');
+                updateStats();
+            }
+        }
+
+        function rejectStudent(id) {
+            const student = pendingStudents.find(s => s.id === id);
+            if (student) {
+                pendingStudents = pendingStudents.filter(s => s.id !== id);
+                alert(`Student ${student.name} rejected.`);
+                loadSectionData('pending');
+                updateStats();
+            }
+        }
+
+        function forwardToAdmin(id) {
+            const student = approvedStudents.find(s => s.id === id);
+            if (student) {
+                student.status = 'forwarded';
+                student.date = new Date().toISOString().split('T')[0];
+                forwardedStudents.push(student);
+                approvedStudents = approvedStudents.filter(s => s.id !== id);
+                
+                                 alert(`Student ${student.name} forwarded to Dean successfully!`);
+                loadSectionData('approved');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('pending-count').textContent = pendingStudents.length;
+            document.getElementById('approved-count').textContent = approvedStudents.length;
+        }
+
+        function generateApprovalReport() {
+            const title = 'Monthly Approval Report';
+            const data = {
+                totalStudents: pendingStudents.length + approvedStudents.length + forwardedStudents.length,
+                monthlyStats: {
+                    pending: pendingStudents.length,
+                    approved: approvedStudents.length,
+                    forwarded: forwardedStudents.length,
+                    total: pendingStudents.length + approvedStudents.length + forwardedStudents.length
+                },
+                approvalTrends: {
+                    approvalRate: Math.round((approvedStudents.length / (pendingStudents.length + approvedStudents.length + forwardedStudents.length)) * 100),
+                    forwardRate: Math.round((forwardedStudents.length / (pendingStudents.length + approvedStudents.length + forwardedStudents.length)) * 100),
+                    pendingRate: Math.round((pendingStudents.length / (pendingStudents.length + approvedStudents.length + forwardedStudents.length)) * 100)
+                },
+                departmentBreakdown: {},
+                recentApprovals: approvedStudents.slice(0, 5).map(student => ({
+                    name: student.name,
+                    department: student.department,
+                    date: student.date
+                }))
+            };
+            
+            // Calculate department breakdown
+            const allStudents = [...pendingStudents, ...approvedStudents, ...forwardedStudents];
+            allStudents.forEach(student => {
+                if (!data.departmentBreakdown[student.department]) {
+                    data.departmentBreakdown[student.department] = { total: 0, approved: 0, pending: 0, forwarded: 0 };
+                }
+                data.departmentBreakdown[student.department].total++;
+                if (student.status === 'approved') data.departmentBreakdown[student.department].approved++;
+                else if (student.status === 'pending') data.departmentBreakdown[student.department].pending++;
+                else if (student.status === 'forwarded') data.departmentBreakdown[student.department].forwarded++;
+            });
+            
+            showReportPreview(title, data, 'approval');
+        }
+
+        function viewDepartmentAnalytics() {
+            generateAnalyticsReport('department');
+        }
+
+        function exportStudentData() {
+            const allStudents = [...pendingStudents, ...approvedStudents, ...forwardedStudents];
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Roll No,Name,Department,Year,Status,Date\n"
+                + allStudents.map(student => 
+                    `${student.rollNo},${student.name},${student.department},${student.year},${student.status},${student.date}`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "student_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('Student data exported successfully as CSV file!');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'role_selection.html';
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSectionData('pending');
+            updateStats();
+        });
+    </script>
+</body>
+</html> 

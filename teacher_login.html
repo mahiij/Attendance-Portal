@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Teacher Login</title>
+    <link rel="stylesheet" href="teacher_dashboard.css" />
+
+    <style>
+        body {
+            background: linear-gradient(120deg, #f0f7ff 60%, #dbeafe 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .teacher-login-box {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+            padding: 36px 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .teacher-login-box h2 {
+            color: #2563eb;
+            margin-bottom: 18px;
+        }
+        .teacher-login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: stretch;
+        }
+        .teacher-login-form input[type="text"],
+        .teacher-login-form input[type="password"] {
+            padding: 10px;
+            border: 1.5px solid #2563eb;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .teacher-login-form label {
+            text-align: left;
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .teacher-login-form button {
+            background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 0;
+            font-size: 1.08em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .teacher-login-form button:hover {
+            background: linear-gradient(90deg, #1e40af 60%, #3b82f6 100%);
+        }
+        .gift-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 18px;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+            border: 3px solid #2563eb;
+            background: #fff;
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 0.9em;
+            margin-top: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="teacher-login-box">
+        <img src="https://i.pinimg.com/736x/a1/f1/43/a1f143a671136781b11120884da9e77d.jpg" alt="University Logo" class="gift-logo">
+        <h2>Teacher Login</h2>
+        <form class="teacher-login-form" id="teacherLoginForm">
+            <div>
+                <label for="teacherId">Teacher ID</label>
+                <input type="text" id="teacherId" name="teacherId" required />
+            </div>
+            <div>
+                <label for="teacherPassword">Password</label>
+                <input type="password" id="teacherPassword" name="teacherPassword" required />
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const teacherId = document.getElementById('teacherId').value;
+            const teacherPassword = document.getElementById('teacherPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Simple validation - you can modify this as needed
+            if (teacherId.trim() === '' || teacherPassword.trim() === '') {
+                errorMessage.textContent = 'Please fill in all fields';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // For demo purposes, accept any non-empty credentials
+            // In a real application, you would validate against a database
+            if (teacherId && teacherPassword) {
+                // Store teacher info in sessionStorage (optional)
+                sessionStorage.setItem('teacherId', teacherId);
+                sessionStorage.setItem('teacherLoggedIn', 'true');
+                
+                // Redirect to teacher dashboard
+                window.location.href = 'teacher.html';
+            } else {
+                errorMessage.textContent = 'Invalid credentials. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 
